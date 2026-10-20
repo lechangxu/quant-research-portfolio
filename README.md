@@ -2,6 +2,8 @@
 
 [![tests](https://github.com/lechangxu/quant-research-portfolio/actions/workflows/tests.yml/badge.svg)](https://github.com/lechangxu/quant-research-portfolio/actions/workflows/tests.yml)
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 **Production-grade systematic trading methodology — the parts that survive contact with live money.**
 
 This repository publishes the *research process* behind quantitative trading systems I have run in production (crypto perpetual futures and China A-shares): how live-vs-backtest divergence is audited, how new factors are gated before they can touch capital, and what the graveyard of rejected ideas looks like.
