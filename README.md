@@ -1,6 +1,7 @@
 # Quant Research Portfolio
 
 [![tests](https://github.com/lechangxu/quant-research-portfolio/actions/workflows/tests.yml/badge.svg)](https://github.com/lechangxu/quant-research-portfolio/actions/workflows/tests.yml)
+[English](README.md) | [简体中文](README.zh-CN.md)
 
 **Production-grade systematic trading methodology — the parts that survive contact with live money.**
 
