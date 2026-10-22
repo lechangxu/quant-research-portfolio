@@ -22,6 +22,17 @@ Open-source backtesting frameworks are abundant and excellent — [vectorbt](htt
 
 These documents are my answers, written at the time the work was done, against live systems.
 
+## Stack
+
+| Layer | What it is |
+|---|---|
+| Language | Python 3.10+ (`requires-python` in `framework/pyproject.toml`) |
+| Package | `quantgate` — `pip install -e "framework[dev]"` |
+| Runtime dependencies | pandas >= 2.0, numpy >= 1.24, requests >= 2.28 |
+| Dev dependencies | pytest >= 7.0 |
+| Tests | pytest — 14 tests in `framework/tests` |
+| CI | GitHub Actions, Python 3.12 |
+
 ## Contents
 
 | Doc | Topic |

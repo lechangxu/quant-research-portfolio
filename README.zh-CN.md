@@ -23,6 +23,17 @@
 
 这些文档是我的答案，写在事情发生的当时，对着实盘系统。
 
+## 技术栈
+
+| 层 | 内容 |
+|---|---|
+| 语言 | Python 3.10+（`framework/pyproject.toml` 的 `requires-python`） |
+| 软件包 | `quantgate` —— `pip install -e "framework[dev]"` |
+| 运行时依赖 | pandas >= 2.0、numpy >= 1.24、requests >= 2.28 |
+| 开发依赖 | pytest >= 7.0 |
+| 测试 | pytest —— `framework/tests` 下 14 个测试 |
+| CI | GitHub Actions，Python 3.12 |
+
 ## 目录
 
 | 文档 | 主题 |
