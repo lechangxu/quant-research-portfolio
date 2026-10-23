@@ -8,7 +8,7 @@
 This repository publishes the *research process* behind quantitative trading systems I have run in production (crypto perpetual futures and China A-shares): how live-vs-backtest divergence is audited, how new factors are gated before they can touch capital, and what the graveyard of rejected ideas looks like.
 
 > **What this is:** evidence of engineering and research rigor.
-> **What this is not:** strategy code, factor recipes, parameters, weights, or anything that reproduces a live portfolio. Those stay private.
+> **What this is not:** strategy code, factor formulas, the complete weight table, execution parameters, or anything that reproduces a live portfolio. A weight or a Sharpe quoted in these documents is the evidence behind a rejection, not a recipe. Everything here stops at methodology; the live configuration stays private.
 
 ---
 
