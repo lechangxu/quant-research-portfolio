@@ -41,6 +41,7 @@
 | [01 — 实盘与回测偏差审计](docs/01-live-vs-backtest-divergence-audit.md) | 一个生产加密永续系统与其回测之间的九处偏差，按严重程度排序。包含：一个吸收态移动止损（86.8% 的滚动起点回测路径被永久锁死，中位存活 59 days）、一个尾部依赖筛查（去掉样本内最好的 1.4% 的交易日，收益归零），以及一个单元测试从未抓到的维度不匹配根因。 |
 | [02 — 因子 A/B 验收协议](docs/02-factor-ab-protocol.md) | 任何新因子在获得权重之前、必须在*组合*层面通过的四条硬阈值。一条命令，PASS/FAIL，无例外。在 OOS 站不住的样本内改善，就按它的本来面目分类：一次样本内幻觉。 |
 | [03 — 负结果日志](docs/03-negative-results-log.md) | 被*否决*的因子与设计改动 —— 连同杀死它们的数字一起公开。因为一个只展示赢家的研究过程是营销，不是研究。 |
+| [04 — 域本体作为运营层](docs/04-domain-ontology-operations-layer.zh-CN.md) | 182 个目录因子里 92 个静默消失 42 天，四份清单全绿。根治不是加检查，而是把域建模成本体：一张类型化注册表（objects/links/actions）派生所有监控/目录/审计，外加原子 manifest 作为跨机信任的唯一凭证。Palantir 模式的 SQLite 尺度实现。([English](docs/04-domain-ontology-operations-layer.md) · [HTML 展示版](docs/quantmind-ontology.html)) |
 | [`framework/` — quantgate](framework/README.md) | A/B 门禁的可运行实现，~400 lines 有测试的 Python：免密钥 Binance 数据适配器、无前视回测器、四条阈值写成常量，`run_ab()` → PASS/FAIL。文档证明思考，这个证明交付。`pip install -e ".[dev]" && pytest && python examples/run_ab_demo.py` |
 
 ## 方法论要点

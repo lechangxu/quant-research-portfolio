@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>QuantMind 本体</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Sans+SC:wght@400;600;700&family=Space+Grotesk:wght@700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.1/mermaid.min.js"></script>
+</head>
+<body>
+<style>
+/* Layout: 单栏技术规格书（spec sheet），~760px 正文列；表/图/代码各自 overflow-x 容器
+   Color: 工程台账 —— 冷纸面 + 墨蓝正文 + 注册表钴蓝 accent；琥珀专用于「门/失败路径」语义
+   Type: Space Grotesk 标题 / Inter+Noto Sans SC 正文 / IBM Plex Mono 代码与文件路径 */
+:root {
+  --bg: #F7F8FA;
+  --surface: #FFFFFF;
+  --fg: #1B2331;
+  --muted: #5A6678;
+  --faint: #8B96A6;
+  --line: #DCE2EA;
+  --accent: #2456B8;
+  --accent-soft: #E8EFFB;
+  --gate: #A86410;
+  --gate-soft: #FBF1E0;
+  --ok: #1E7A4C;
+  --code-bg: #EEF1F5;
+  font-family: Inter, "Noto Sans SC", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10151C;
+    --surface: #171E28;
+    --fg: #E2E8F0;
+    --muted: #9AA7B8;
+    --faint: #6B7889;
+    --line: #2A3442;
+    --accent: #7FA8EC;
+    --accent-soft: #1C2B44;
+    --gate: #E0A450;
+    --gate-soft: #2E2416;
+    --ok: #5CB98A;
+    --code-bg: #1D2632;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10151C;
+  --surface: #171E28;
+  --fg: #E2E8F0;
+  --muted: #9AA7B8;
+  --faint: #6B7889;
+  --line: #2A3442;
+  --accent: #7FA8EC;
+  --accent-soft: #1C2B44;
+  --gate: #E0A450;
+  --gate-soft: #2E2416;
+  --ok: #5CB98A;
+  --code-bg: #1D2632;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font: 15px/1.75 Inter, "Noto Sans SC", system-ui, sans-serif;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 48px;
+}
+.page { max-width: 760px; margin: 0 auto; }
+
+.eyebrow {
+  font: 600 11px/1 "IBM Plex Mono", monospace;
+  letter-spacing: .14em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+h1 {
+  font: 700 34px/1.2 "Space Grotesk", "Noto Sans SC", sans-serif;
+  margin: 10px 0 8px;
+  text-wrap: balance;
+  letter-spacing: -.01em;
+}
+.lede { color: var(--muted); font-size: 16px; margin: 0 0 6px; max-width: 62ch; }
+.lede strong { color: var(--fg); }
+.meta { color: var(--faint); font-size: 12.5px; margin-bottom: 32px; }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin: 0 0 40px;
+}
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.stat b {
+  display: block;
+  font: 700 26px/1.1 "Space Grotesk", "Noto Sans SC", sans-serif;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+.stat span { font-size: 12px; color: var(--muted); }
+
+h2 {
+  font: 700 20px/1.3 "Space Grotesk", "Noto Sans SC", sans-serif;
+  margin: 44px 0 4px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+h2 .idx { color: var(--accent); font-family: "IBM Plex Mono", monospace; font-size: 13px; letter-spacing: .1em; display: block; margin-bottom: 4px; }
+.sub { color: var(--muted); margin: 0 0 18px; font-size: 14px; }
+
+.twrap { overflow-x: auto; margin: 0 0 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 620px; }
+th {
+  text-align: left;
+  font: 600 11px/1.4 "IBM Plex Mono", "Noto Sans SC", monospace;
+  letter-spacing: .08em;
+  color: var(--faint);
+  text-transform: uppercase;
+  padding: 8px 12px;
+  border-bottom: 2px solid var(--line);
+}
+td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+td:first-child { font-weight: 600; white-space: nowrap; }
+tr:last-child td { border-bottom: none; }
+code, .mono {
+  font: 13px/1.6 "IBM Plex Mono", monospace;
+  background: var(--code-bg);
+  padding: 1px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+td .mono { white-space: normal; }
+
+pre.code {
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  font: 12.5px/1.7 "IBM Plex Mono", monospace;
+  margin: 16px 0;
+}
+pre.code .cm { color: var(--faint); }
+
+.diagram {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  overflow-x: auto;
+  margin: 16px 0;
+}
+.diagram .mermaid { margin: 0; font-size: 13px; }
+
+.note {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  margin: 18px 0;
+  font-size: 14px;
+}
+.note.gate { border-left-color: var(--gate); background: var(--gate-soft); }
+.note b { color: var(--fg); }
+
+.gates { display: grid; gap: 12px; margin: 16px 0; }
+.gate-item {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--gate);
+  border-radius: 8px;
+  padding: 14px 18px;
+}
+.gate-item h3 { font-size: 15px; margin: 0 0 4px; }
+.gate-item p { margin: 0; color: var(--muted); font-size: 14px; }
+
+ul.tight { margin: 12px 0; padding-left: 22px; }
+ul.tight li { margin-bottom: 10px; }
+ul.tight li::marker { color: var(--accent); }
+
+.files { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 8px; }
+.files li {
+  display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 8px; padding: 10px 14px; font-size: 13.5px;
+}
+.files .mono { background: none; padding: 0; color: var(--accent); font-weight: 600; }
+.files span { color: var(--muted); }
+
+footer {
+  margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
+  color: var(--faint); font-size: 12.5px;
+}
+@media (max-width: 480px) {
+  h1 { font-size: 27px; }
+  body { padding-block: 32px; }
+}
+</style>
+
+<div class="page">
+
+<div class="eyebrow">QUANTMIND ONTOLOGY · OBJECTS / LINKS / ACTIONS</div>
+<h1>QuantMind 本体</h1>
+<p class="lede">一个 A 股量化研究系统的域模型：有哪些对象、对象之间的血缘、谁被允许对对象做什么动作。<strong>Palantir 管这叫 Ontology；我们管这叫 registry + manifest。同一件事。</strong></p>
+<div class="meta">2026-11-18 · 全部内容锚定生产代码，非规划文 · 源文档 <span class="mono">docs/quantmind-ontology.md</span></div>
+
+<div class="stats">
+  <div class="stat"><b>9</b><span>类型化对象</span></div>
+  <div class="stat"><b>8</b><span>注册因子表</span></div>
+  <div class="stat"><b>258</b><span>声明式因子列</span></div>
+  <div class="stat"><b>6</b><span>带闸动作</span></div>
+  <div class="stat"><b>0</b><span>监控逃逸路径</span></div>
+</div>
+
+<div class="note">
+<b>为什么要有本体。</b>2026-09-06 判例：两张因子表同时缺席四份独立维护的字面量清单，停更 42 天无人发现，182 个目录因子里 92 个静默消失。根治不是「多加几个检查」，而是把域建模成本体 —— 一张注册表作为唯一真源，所有清单、监控、目录、API 从它派生。
+</div>
+
+<h2><span class="idx">01 · OBJECTS</span>类型化对象</h2>
+<p class="sub">系统里有什么。每个对象有真身（代码/文件）、关键属性、以及在域里的角色。</p>
+<div class="twrap">
+<table>
+  <thead><tr><th>Object</th><th>真身</th><th>关键属性</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>DataSource</td><td><span class="mono">tushare / akshare / cninfo / 东财</span></td><td>可达性、频率、出口约束</td><td>原始数据源。境外 IP 被封是已知约束 → 架构决策：内地服务器唯一计算方</td></tr>
+    <tr><td>RawTable</td><td><span class="mono">daily_data</span>、财务/公告/研报表</td><td>schema、max(trade_date)</td><td>落地原始数据，一切派生物的根</td></tr>
+    <tr><td>FactorTable</td><td><span class="mono">scripts/factors/registry.py</span></td><td>columns、max_lag、writer、category</td><td><b>核心 object</b>。每张表是注册条目，不是文件</td></tr>
+    <tr><td>Factor</td><td>表内列（258 声明列 + 5 张 schema 发现表）</td><td>中文标签、类别</td><td>目录 / API / IC 报告展示的最小单位</td></tr>
+    <tr><td>ICStats</td><td><span class="mono">factor_ic_stats.json</span></td><td>IC 值、区间、计算日</td><td>因子有效性度量，内地算、HK 只读</td></tr>
+    <tr><td>Manifest</td><td><span class="mono">manifest.json</span></td><td>max_trade_date、created_at、degraded</td><td><b>一次同步的完成证明</b>。原子写，跨机信任的唯一凭证</td></tr>
+    <tr><td>IntelReport</td><td><span class="mono">users.db::daily_intel_reports</span></td><td>日期、叙事文本</td><td>面向用户的产品对象，HK 本地生成</td></tr>
+    <tr><td>User</td><td><span class="mono">users.db</span></td><td>认证、订阅</td><td>产品对象</td></tr>
+    <tr><td>Deployment</td><td>HK <span class="mono">aiyangu.com</span> / 内地 <span class="mono"><mainland-relay></span></td><td>角色、systemd 单元、crontab</td><td>双机拓扑本身是本体的一部分：内地 = 唯一计算方，HK = 纯消费者</td></tr>
+  </tbody>
+</table>
+</div>
+
+<pre class="code"><span class="cm"># scripts/factors/registry.py —— 唯一真源（真实代码，节选）</span>
+FactorTable("price_factors",       tuple(PRICE_FACTOR_COLS),   max_lag=2, writer="scripts.factors.cli update",    category="技术因子")
+FactorTable("alpha158_factors",    tuple(ALPHA158_COLS),       max_lag=2, writer="scripts.factors.cli update",    category="技术因子")
+FactorTable("extended_factors",    tuple(EXTENDED_FACTOR_COLS),max_lag=2, writer="scripts.factors.cli update",    category="其他")
+FactorTable("fundamental_factors", None,                       max_lag=3, writer="scripts/backfill_fundamental_factors.py", category="质量")
+FactorTable("holder_factors",      None,                       max_lag=7, writer="scripts/backfill_holder.py",    category="股东")
+<span class="cm"># …共 8 张；columns=None → 列由 SQLite schema 发现，写库后仍须与实际 schema 对账（A2）</span></pre>
+
+<p>新增一张因子表 = 在注册表登记一次。登记即被巡检、进目录、进 IC、进部署审计 —— <strong>不需要任何人记得去改第二份清单</strong>。这就是本体相对「配置文件集合」的区别。</p>
+
+<h2><span class="idx">02 · LINKS</span>血缘与依赖</h2>
+<p class="sub">Source → Raw → FactorTable → ICStats → Manifest → HK 快照 → 产品面。每一环的「完成」都不是进程自报，而是下游可独立验证的物证。</p>
+<div class="diagram">
+<pre class="mermaid">
+graph LR
+    subgraph Sources[DataSources]
+        TS[tushare] -->|A股行情/财务| SS
+        AK[akshare] -->|中继| SS
+        CN[cninfo 公告] --> SS
+        EM[东财研报] --> SS
+    end
+    subgraph Mainland[内地 — 唯一计算方]
+        SS[sync-data-server.sh<br/>07/12/20 工作日] --> RAW[(RawTables<br/>daily_data 等)]
+        RAW --> FT[(FactorTables ×8<br/>registry 派生)]
+        FT --> IC[ICStats<br/>compute_factor_ic]
+        IC --> MF[manifest.json<br/>原子写]
+        SS -->|关键阶段失败 exit 1| NO[/不写 manifest/]
+    end
+    subgraph HK[HK aiyangu.com — 纯消费者]
+        SYN[sync-db.sh 21:00] -->|校验 manifest 新鲜| SNAP[(DB 快照<br/>原子换)]
+        SNAP --> API[FastAPI :8011<br/>搜索/情报/因子研究]
+        SNAP --> RPT[IntelReport<br/>HK 本地生成]
+    end
+    MF --> SYN
+    NO -->|HK 不拉| WD[看门狗告警]
+    FT -.->|MAX trade_date vs daily_data| FW[check_freshness.py<br/>每日巡检]
+    FW -->|超 max_lag| WD
+</pre>
+</div>
+
+<h2><span class="idx">03 · ACTIONS</span>动作 + 许可门</h2>
+<p class="sub">动作不是「函数」，是带前置条件、验证证据、失败路径的操作。</p>
+<div class="twrap">
+<table>
+  <thead><tr><th>Action</th><th>触发</th><th>前置 gate</th><th>完成证据（不接受自报）</th><th>失败路径</th></tr></thead>
+  <tbody>
+    <tr><td><span class="mono">daily-update</span></td><td>cron 07/12/20</td><td>flock 防重入；launcher 统一入口</td><td>manifest 原子写（含 max_trade_date）</td><td>关键阶段 exit 1 → 不写 manifest → HK 停拉 → 告警</td></tr>
+    <tr><td><span class="mono">sync-to-hk</span></td><td>cron 21:00</td><td>manifest 新鲜校验</td><td>原子换 DB + ActiveState=active 断言</td><td>校验失败 → 保留旧快照，服务不中断</td></tr>
+    <tr><td><span class="mono">register-factor-table</span></td><td>人工（开发）</td><td>registry 登记（唯一入口）</td><td>schema 对账（声明列 vs 实际列）</td><td>对账失败 → 部署审计 <span class="mono">--audit</span> 红</td></tr>
+    <tr><td><span class="mono">backfill-*</span></td><td>人工/补数</td><td>容差内不得与 daily update 竞争</td><td>写库行数 + freshness 复测</td><td>退出 0 但写 0 行 = 假完成，freshness 次日抓</td></tr>
+    <tr><td><span class="mono">deploy</span></td><td>人工 push</td><td>CI <span class="mono">check_sql.py</span> 绿</td><td><span class="mono">verify_update_server.sh --audit</span> 实弹</td><td>红 → 回滚上一快照</td></tr>
+    <tr><td><span class="mono">ic-recompute</span></td><td>cron / 随更新</td><td>因子表新鲜（max_lag 内）</td><td>IC 文件 mtime + 区间对账</td><td>过期因子 → IC 标 degraded</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="gates">
+  <div class="gate-item">
+    <h3>A2 对账门 —— 永不接受进程自报的成功</h3>
+    <p><span class="mono">systemctl restart</span> 退 0 ≠ 服务在跑；backfill 退 0 ≠ 写了数据。每个 action 的「完成证据」列就是这条门的物化。</p>
+  </div>
+  <div class="gate-item">
+    <h3>假完成（false-completion）是头号敌人</h3>
+    <p>09-06 事故的本质不是「没人检查」，是四份清单各自以为对方在检查。本体化后，被巡检集合 ≡ 注册集合，恒等式成立 —— 「漏登记的新表逃出监控」这个失败模式从结构上不存在。</p>
+  </div>
+  <div class="gate-item">
+    <h3>degraded 是一等公民</h3>
+    <p>manifest 带 degraded 标志：允许带病交付，但病必须显式声明、随数据流到消费者，不许静默。</p>
+  </div>
+</div>
+
+<h2><span class="idx">04 · GOVERNANCE</span>本体自身的变更治理</h2>
+<ul class="tight">
+  <li><strong>门的成文法</strong>：repo CLAUDE.md 的 A1–A7（判据四问 / 对账门 / 改动幅度门 / 契约门 / 有界门 / 启动前置门 / 元规则）是本体宪法。每条门带 Q4 验证记录 —— 把被检的东西弄坏，判据必须变红（业界叫 mutation testing）。</li>
+  <li><strong>注册表即 PR 对象</strong>：改 registry = 改本体，走 git review；<span class="mono">test_registry.py</span> 保证注册表自身一致性。</li>
+  <li><strong>派生恒等式有测试</strong>：<span class="mono">check_arch_drift.py</span> / <span class="mono">check_claims.py</span> 防止代码漂移出本体描述。</li>
+  <li><strong>跨机契约文件化</strong>：<span class="mono">docs/architecture.md</span> 与 crontab（<span class="mono">install-cron.sh</span> 幂等安装）互为对账。</li>
+  <li><strong>事故台账回流</strong>：每次本体失效都产生一条新 gate 或新属性（如 manifest 的 degraded），写回本体。本体是<strong>长出来的</strong>，不是设计出来的。</li>
+</ul>
+
+<h2><span class="idx">05 · TRANSLATION</span>FDE 词汇翻译表</h2>
+<p class="sub">这套东西在 Palantir / Forward Deployed Engineering 话语体系里的名字。</p>
+<div class="twrap">
+<table>
+  <thead><tr><th>Palantir / FDE 词汇</th><th>本仓对应</th><th>一句话</th></tr></thead>
+  <tbody>
+    <tr><td>Ontology</td><td><span class="mono">registry.py</span> + <span class="mono">manifest.json</span></td><td>客户域的 typed objects / links / actions</td></tr>
+    <tr><td>Ontology Proposal</td><td>git PR + <span class="mono">test_registry.py</span> + CI</td><td>本体变更走评审流，不落盘不进生产</td></tr>
+    <tr><td>Actions（带权限）</td><td>§03 许可表</td><td>动作是带闸的，不是裸函数</td></tr>
+    <tr><td>Ship on day one</td><td>backfill 当日写当日跑</td><td>快，但快不过对账门</td></tr>
+    <tr><td>False-completion 防御</td><td>A2 对账门 + freshness 看门狗</td><td>完成必须由下游物证证明</td></tr>
+    <tr><td>反馈回灌产品</td><td>事故台账 → 新 gate → 注册表新属性</td><td>本体从事故里长出来</td></tr>
+    <tr><td>Durable execution</td><td>flock + 原子 manifest + 快照原子换</td><td>手写等价物；产品化版本 = Temporal</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2><span class="idx">06 · EVIDENCE</span>证据锚点</h2>
+<p class="sub">本文只描述已存在的东西。每一条都可以在生产仓库里查到。</p>
+<ul class="files">
+  <li><span class="mono">scripts/factors/registry.py</span><span>因子注册表，文件头注释记录 09-06 判例全文</span></li>
+  <li><span class="mono">scripts/check_freshness.py</span><span>新鲜度看门狗，WATCHED 从 registry 派生</span></li>
+  <li><span class="mono">docs/architecture.md</span><span>双机拓扑真身文档</span></li>
+  <li><span class="mono">docs/2026-09-07_工程质量门方案.md</span><span>A1–A7 质量门与 Q4 验证记录</span></li>
+  <li><span class="mono">scripts/factors/verify_update_server.sh</span><span>部署后实弹审计（--audit）</span></li>
+  <li><span class="mono">scripts/install-cron.sh</span><span>cron 幂等安装</span></li>
+</ul>
+
+<footer>本体即代码，代码即证据。QuantMind Ontology · 2026-11-18</footer>
+
+</div>
+
+<script>
+if (window.mermaid) {
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'neutral',
+    flowchart: { htmlLabels: true }
+  });
+}
+</script>
+</body>
+</html>
