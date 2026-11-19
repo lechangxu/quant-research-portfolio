@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>本体学习手册</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.1/mermaid.min.js"></script>
+<style>
+/* Layout: 长读页，720px 正文列 + 桌面端粘性章节目录；阅读优先
+   Color: 书卷纸面 + 墨蓝 + 朱砂 accent（学习材料的「注疏」感）；双主题
+   Type: Noto Serif SC 正文（长读）/ Noto Sans SC 标题与 UI / IBM Plex Mono 术语与代码 */
+:root {
+  --bg: #FAF8F4;
+  --surface: #FFFFFF;
+  --fg: #23282F;
+  --muted: #5D6672;
+  --faint: #939BA6;
+  --line: #E4E0D6;
+  --accent: #B03A2E;
+  --accent-soft: #F9ECEA;
+  --blue: #2B5AA6;
+  --blue-soft: #EBF1FA;
+  --gold: #9A7B2D;
+  --gold-soft: #F8F2DF;
+  --code-bg: #F0EDE6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161A; --surface: #1C1F25; --fg: #DFE3E8; --muted: #9AA2AD;
+    --faint: #6C747F; --line: #2C313A; --accent: #E08070; --accent-soft: #2E1F1D;
+    --blue: #8FB4EC; --blue-soft: #1D2A40; --gold: #D4B25C; --gold-soft: #2A2517;
+    --code-bg: #232730;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14161A; --surface: #1C1F25; --fg: #DFE3E8; --muted: #9AA2AD;
+  --faint: #6C747F; --line: #2C313A; --accent: #E08070; --accent-soft: #2E1F1D;
+  --blue: #8FB4EC; --blue-soft: #1D2A40; --gold: #D4B25C; --gold-soft: #2A2517;
+  --code-bg: #232730;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font: 16px/1.9 "Noto Serif SC", serif;
+  margin: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 80px;
+}
+.wrap { max-width: 1060px; margin: 0 auto; display: flex; gap: 48px; align-items: flex-start; }
+.main { max-width: 720px; min-width: 0; flex: 1; }
+.toc { position: sticky; top: 32px; width: 240px; flex-shrink: 0; font-family: "Noto Sans SC", sans-serif; font-size: 13px; }
+.toc b { display: block; font-size: 11px; letter-spacing: .12em; color: var(--faint); margin-bottom: 10px; }
+.toc a { display: block; color: var(--muted); text-decoration: none; padding: 4px 0 4px 12px; border-left: 2px solid var(--line); }
+.toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+@media (max-width: 940px) { .toc { display: none; } }
+
+h1 { font: 700 32px/1.3 "Noto Sans SC", sans-serif; margin: 8px 0 10px; letter-spacing: -.01em; }
+.eyebrow { font: 600 11px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; color: var(--accent); text-transform: uppercase; }
+.lede { color: var(--muted); font-size: 17px; max-width: 60ch; }
+.lede b { color: var(--fg); }
+.meta { font: 12.5px "Noto Sans SC", sans-serif; color: var(--faint); margin: 12px 0 0; }
+
+h2 { font: 700 22px/1.4 "Noto Sans SC", sans-serif; margin: 56px 0 6px; padding-top: 24px; border-top: 1px solid var(--line); }
+h2 .no { font: 600 12px "IBM Plex Mono", monospace; color: var(--accent); letter-spacing: .1em; display: block; margin-bottom: 6px; }
+h3 { font: 700 17px/1.5 "Noto Sans SC", sans-serif; margin: 28px 0 8px; }
+p { margin: 12px 0; }
+.term { font: 600 14.5px "IBM Plex Mono", monospace; background: var(--code-bg); padding: 1px 7px; border-radius: 4px; white-space: nowrap; }
+
+.def {
+  background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--blue);
+  border-radius: 8px; padding: 16px 20px; margin: 18px 0;
+}
+.def .who { font: 600 11px "IBM Plex Mono", monospace; letter-spacing: .1em; color: var(--blue); display: block; margin-bottom: 6px; }
+.def p { margin: 4px 0; }
+
+.note { border-left: 3px solid var(--gold); background: var(--gold-soft); padding: 12px 18px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: 15px; }
+.note.key { border-left-color: var(--accent); background: var(--accent-soft); }
+.note b:first-child { color: var(--accent); }
+.note:not(.key) b:first-child { color: var(--gold); }
+
+.diagram { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; overflow-x: auto; margin: 16px 0; }
+.diagram .mermaid { margin: 0; font-size: 14px; font-family: "Noto Sans SC", sans-serif; }
+
+.twrap { overflow-x: auto; margin: 14px 0; }
+table { border-collapse: collapse; width: 100%; font: 14px/1.7 "Noto Sans SC", sans-serif; min-width: 600px; }
+th { text-align: left; font-size: 11.5px; letter-spacing: .06em; color: var(--faint); padding: 8px 12px; border-bottom: 2px solid var(--line); }
+td { padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+
+ul, ol { padding-left: 24px; }
+li { margin: 6px 0; }
+li::marker { color: var(--accent); }
+
+details.quiz {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  padding: 14px 18px; margin: 12px 0; font-family: "Noto Sans SC", sans-serif;
+}
+details.quiz summary { cursor: pointer; font-weight: 600; font-size: 15px; }
+details.quiz summary::marker { color: var(--accent); }
+details.quiz .ans { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 14.5px; color: var(--muted); }
+details.quiz .ans b { color: var(--fg); }
+
+.steps { counter-reset: step; list-style: none; padding: 0; margin: 16px 0; }
+.steps li { position: relative; padding: 12px 16px 12px 56px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; margin: 10px 0; font-family: "Noto Sans SC", sans-serif; font-size: 14.5px; }
+.steps li::before {
+  counter-increment: step; content: counter(step);
+  position: absolute; left: 14px; top: 14px;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--accent-soft); color: var(--accent);
+  font: 700 14px/28px "IBM Plex Mono", monospace; text-align: center;
+}
+.steps li b { font-size: 15px; }
+
+footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line); font: 13px "Noto Sans SC", sans-serif; color: var(--faint); }
+@media (max-width: 480px) { h1 { font-size: 25px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="toc">
+  <b>目录</b>
+  <a href="#why">01 · 为什么需要本体</a>
+  <a href="#what">02 · 本体是什么</a>
+  <a href="#history">03 · 概念简史</a>
+  <a href="#domain">04 · 「域」是什么</a>
+  <a href="#principles">05 · 核心原理</a>
+  <a href="#method">06 · 怎么建：方法论</a>
+  <a href="#landscape">07 · 生态谱系</a>
+  <a href="#mine">08 · 我的实例</a>
+  <a href="#pitfalls">09 · 常见误区</a>
+  <a href="#quiz">10 · 自测</a>
+  <a href="#refs">11 · 学习路径</a>
+</nav>
+
+<div class="main">
+
+<div class="eyebrow">ONTOLOGY · 学习手册</div>
+<h1>本体：从哲学概念到<br>AI 落地的工程方法</h1>
+<p class="lede">这份手册回答五个问题：<b>为什么需要本体、本体是什么、「域」是什么、背后的原理、怎么动手建</b>。写给自己的长期参考，挂在网上随时翻看。</p>
+<div class="meta">2026-11-19 · 配套材料：<a href="https://lechangxu.github.io/quant-research-portfolio/quantmind-ontology.html">QuantMind 本体实例</a> · <a href="https://github.com/lechangxu/quant-research-portfolio">公开作品集仓</a></div>
+
+<h2 id="why"><span class="no">01 · WHY</span>为什么需要本体</h2>
+
+<h3>问题一：数据「只能看，不能用」</h3>
+<p>过去二十年，企业在数据仓库和 BI 上花了巨额预算。数据被抽进湖里，仪表盘天天更新。但走到业务一线，看到的场景是：经理发现报表数字不对，转头用 Excel 传来传去；AI 需求预测模型跑出来了，但接不进订货系统，员工盯着屏幕手工誊数。</p>
+<p>根因是一个结构性断裂：<b>「存数据、看数据的地方」（数仓/BI）和「干业务、改数据的地方」（业务系统）是两套东西</b>。数据被当作「静态快照」——只用于分析，不驱动行动。断裂不除，AI 再强也只能停在 demo。</p>
+
+<h3>问题二：系统越建越多，语言越说越不通</h3>
+<p>销售用 CRM、财务用 ERP、仓储用 WMS。每个系统里都有「客户」「订单」「库存」，但含义各不相同：CRM 的「客户」含潜在客户，财务的「客户」只含开过户的。同词不同义，跨系统对不上 —— 这就是「数据孤岛」的本质：<b>不是数据没打通，是概念没对齐</b>。</p>
+
+<h3>问题三：AI 没有「常识边界」</h3>
+<p>大模型什么都能聊，但不知道你公司里「客户」指什么、哪些动作允许执行、库存负数意味着什么。直接接原始数据，结果就是幻觉：一本正经地给出「从 B 仓调 100 件」——而 B 仓上个月已裁撤。<b>AI 缺的不是能力，是企业语境的约束。</b></p>
+
+<div class="note key"><b>本体就是这三个问题的同一个答案：</b>把企业的概念（名词）和允许的操作（动词）建成一张显式的、人和机器都能读的模型，让所有系统、所有 AI、所有人对着同一本「字典+规则书」说话。</div>
+
+<h2 id="what"><span class="no">02 · WHAT</span>本体是什么</h2>
+
+<p>「本体」这个词有三层含义，从哲学到工程一层比一层具体：</p>
+
+<div class="def"><span class="who">哲学 · 自古希腊</span><p>Ontology（本体论）：研究「什么东西存在、以什么方式存在」的哲学分支。世界的根本分类是什么？这是这个词的源头。</p></div>
+
+<div class="def"><span class="who">计算机科学 · Gruber 1993</span><p>「本体是对概念化的显式规范」（an explicit specification of a conceptualization）。1998 年 Studer 等人补充：「<b>共享的</b>概念化的<b>形式化显式</b>规范」——四个关键词缺一不可：共享（大家认可）、概念化（对世界的抽象）、显式（写出来）、形式化（机器可处理）。</p></div>
+
+<div class="def"><span class="who">工程实践 · Palantir</span><p>本体是组织的<b>运营层</b>：把数字资产绑定到现实世界的资产与概念上，形成「数字孪生」，直接驱动业务动作。不只是组织数据，而是表达「企业复杂的、相互关联的决策」。</p></div>
+
+<h3>工程本体的三件套：名词 + 动词 + 规则</h3>
+<p>Palantir 式本体把模型分成两半 —— 这是理解本体的最关键一刀：</p>
+<div class="twrap">
+<table>
+<thead><tr><th></th><th>构成</th><th>回答的问题</th><th>例子</th></tr></thead>
+<tbody>
+<tr><td><b>名词（Semantics）</b></td><td>对象 Object · 属性 Property · 关系 Link</td><td>世界里有什么？</td><td>「因子表」是对象，「最大允许滞后 2 天」是属性，「由 daily_data 派生」是关系</td></tr>
+<tr><td><b>动词（Kinetics）</b></td><td>动作 Action · 函数 Function · 动态安全</td><td>能对世界做什么？</td><td>「回填数据」是动作，带前置条件、副作用、权限</td></tr>
+<tr><td><b>规则（Governance）</b></td><td>权限 · 审批流 · 审计日志</td><td>谁被允许？出了事怎么查？</td><td>改本体要提 Proposal 走评审，每次动作留痕</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="note"><b>为什么「动词入模」是关键创新：</b>传统数据库设计只建名词（表结构），动词（业务逻辑）散落在无数应用的代码里，没人说得全。本体把「允许的更新路径」也建进模型 —— <b>数据模型闭合了</b>。这就是为什么 AI 在本体上敢动手：它能做的动作是枚举出来的，不是开放的。</div>
+
+<h3>一句话工作定义</h3>
+<div class="note key"><b>本体 = 一个域的 typed objects / links / actions + 写回闭环。</b>对象定义「有什么」，关系定义「怎么连」，动作定义「能怎么改」，闭环保证「改了真的生效且留痕」。</div>
+
+<h2 id="history"><span class="no">03 · HISTORY</span>概念简史</h2>
+
+<div class="diagram">
+<pre class="mermaid">
+timeline
+    title 本体概念的演化
+    古希腊~中世纪 : 哲学本体论 — 亚里士多德《范畴篇》研究「存在的分类」
+    1991~1998 : 进入计算机科学 — Gruber 给出经典定义 ; 知识工程兴起
+    2001~2004 : 语义网 — Berners-Lee 提出 Semantic Web ; OWL/RDF 成为 W3C 标准 ; Protégé 工具成熟
+    2000s : 方法论成型 — Stanford Ontology 101 七步法 ; METHONTOLOGY ; 上位本体 gist/SUMO/BFO
+    2012 : 知识图谱出圈 — Google Knowledge Graph「things, not strings」
+    2003~2016 : Palantir — Gotham(情报) → Foundry(企业) ; 本体从「知识表示」改造成「运营层」
+    2020s : 语义层兴起 — Cube/dbt 把「轻本体」带进 BI 与数据分析
+    2023~2025 : LLM 时代 — 本体成为 AI 的约束与锚 ; Palantir AIP ; 2025-11 AI FDE：自然语言建本体
+</pre>
+</div>
+
+<p>读这条线注意一个转折：<b>学院派本体是「知识表示」（描述世界），Palantir 本体是「数字孪生+动作层」（驱动世界）</b>。前者关心推理和分类的严格性，后者关心权限、写回、审计。两者都叫 ontology，被问到时最好两个定义都给，再说清你做的是哪种。</p>
+
+<h2 id="domain"><span class="no">04 · DOMAIN</span>「域」是什么</h2>
+
+<p>「域」（domain）是本体话题里出现频率最高、却很少被解释的词。它有两层相关但不同的含义：</p>
+
+<h3>含义一：业务域 —— 你负责的那片现实世界</h3>
+<p>一个域 = 一块有独立概念体系的业务范围。量化研究是一个域（概念：因子、回测、IC、调仓）；护理保险是另一个域（概念：保单、理赔、照护记录）。<b>域是本体的边界：一个本体只建模一个域。</b>试图建「涵盖一切的宇宙本体」是学院派反复失败的经典坑（Cyc 项目做了四十年）。</p>
+
+<h3>含义二：DDD 的限界上下文 —— 同一概念在不同域里可以不同义</h3>
+<p>领域驱动设计（Domain-Driven Design，Eric Evans 2003）给了两个工具，恰好是本体的思想基础：</p>
+<ul>
+<li><b>统一语言（Ubiquitous Language）</b>：团队对域内每个概念有唯一、无歧义的定义，代码里的名字 = 业务嘴里的名字。本体就是统一语言的物化。</li>
+<li><b>限界上下文（Bounded Context）</b>：承认「客户」在销售域和财务域就是不同东西，不强求统一，而是划清边界、在边界上做显式翻译。本体之间的 Link 就是这种翻译。</li>
+</ul>
+
+<div class="note"><b>为什么这对你重要：</b>FDE 进场第一件事就是「学客户的域」—— 用客户的名词和动词把业务重建一遍。「数据尽调 20 问」问的就是域的边界和质地。会说「先定域，再建本体」，就说明你理解的不是工具而是方法。</div>
+
+<h3>判断域边界的实操标准</h3>
+<ul>
+<li>域内概念互相引用密集，域间引用稀疏（高内聚低耦合的概念版）</li>
+<li>一个域有自己的「谁说了算」（数据 owner）和「什么叫对」（验收标准）</li>
+<li>拿不准就画候选概念的关联草图，断得最开的地方就是边界</li>
+</ul>
+
+<h2 id="principles"><span class="no">05 · PRINCIPLES</span>核心原理</h2>
+
+<h3>原理一：单一真源，万物派生</h3>
+<p>本体的价值不在「建了一张模型」，在于<b>模型是唯一真源，其他一切（清单、监控、权限、文档、代码）从它派生</b>。一旦存在第二份手抄清单，腐烂就开始：两边各自漂移，最后没人知道哪个是真的。这是 quantmind 92 因子事故的根因，也是所有「配置散落」事故的同构根因。</p>
+
+<h3>原理二：模型闭合 —— 名词和动词一起建</h3>
+<p>只建名词 = 百科全书；名词+动词 = 操作系统。动作必须带三样东西：<b>前置条件（gate）、完成证据（不接受自报）、失败路径</b>。动作入模之后，「谁能改什么」变成可查询、可审计的数据，而不是散落在代码里的隐式约定。</p>
+
+<h3>原理三：安全的定义升级 —— 从「藏起来」到「防改错」</h3>
+<p>当系统能驱动现实世界，最大的风险不再是数据泄露，而是<b>对现实的错误修改</b>（错订一万个零件、停掉产线）。所以治理（权限、审批、审计）不是本体的附件，是本体的内核。Palantir 的做法：改本体必须开 branch 提 Proposal 走人审；每次动作提交本身被建模为对象，永久留痕可查询。</p>
+
+<h3>原理四：本体是长出来的，不是设计出来的</h3>
+<p>不要试图第一天就建「完整正确的本体」。正确姿势：选一个小域 → 建最小模型 → 投入使用 → 每次事故/新需求长出新对象或新规则 → 写回本体。评价标准是<b>演化机制的健全</b>（变更走评审、事故会回流），不是初始设计的完美。</p>
+
+<h3>原理五：本体是 AI 的墙，也是 AI 的桥</h3>
+<p>LLM 在本体之外：能聊一切，但不知道边界，幻觉无解。LLM 在本体之内：只能读结构化的名词、只能在枚举的动作里提案 —— <b>幻觉被结构性压死，因为「能做的动作」是有限的</b>。同时本体给了 AI 企业语境（客户的概念、规则、权限），通用模型才能给出企业级答案。墙和桥是同一东西的两面。</p>
+
+<div class="diagram">
+<pre class="mermaid">
+flowchart LR
+    subgraph no_onto["无本体：AI 裸接数据"]
+        A1[("原始孤岛数据")] -->|直接访问| B1(("通用 LLM"))
+        B1 -.->|缺语境| C1["幻觉 / 越界推理"]
+        C1 -.->|无法写回| D1(("靠人肉执行<br>不可规模化"))
+    end
+    subgraph with_onto["有本体：AI 在约束内工作"]
+        A2[("各数据源")] -->|索引| B2{"本体<br>名词+动词+权限"}
+        B2 -->|结构化语境| C2(("LLM"))
+        C2 -->|只在已定义动作内| D2["动作提案"]
+        D2 -->|人审| E2(("安全执行<br>立即写回"))
+    end
+</pre>
+</div>
+
+<h2 id="method"><span class="no">06 · METHOD</span>怎么建：方法论</h2>
+
+<h3>经典七步法（Stanford Ontology 101，学院派基础）</h3>
+<ol class="steps">
+<li><b>定范围</b> —— 本体覆盖哪个域？回答什么问题（competency questions：本体必须能回答的问题清单）？</li>
+<li><b>考虑复用</b> —— 有没有现成上位本体（gist）或行业本体（金融 FIBO）可以站在上面？</li>
+<li><b>枚举术语</b> —— 把域里的重要名词动词全列出来，不管结构</li>
+<li><b>定义类与层级</b> —— 哪些概念是「种类」关系，组织成树</li>
+<li><b>定义属性</b> —— 每个类有什么特征，取值约束是什么</li>
+<li><b>定义约束与关系</b> —— 基数（1对1/1对多）、互斥、推导规则</li>
+<li><b>建实例并验证</b> —— 填真实数据，跑 competency questions 验收</li>
+</ol>
+
+<h3>工程压缩版（Palantir 路线 × 我的实践，更适合小团队）</h3>
+<ol class="steps">
+<li><b>选一个疼的小域</b> —— 标准：多写方 × 有现实世界后果。不疼不值得建</li>
+<li><b>先建名词的最小注册表</b> —— 一张表：对象、关键属性、谁负责（writer）、容忍度。这是唯一真源</li>
+<li><b>派生一切</b> —— 监控、目录、文档全部从注册表生成，删掉所有手抄清单</li>
+<li><b>再建动词</b> —— 给每个操作写清 gate / 完成证据 / 失败路径</li>
+<li><b>治理跟上</b> —— 变更走评审（PR），完成靠对账，事故必回流</li>
+<li><b>最后接 AI</b> —— 让 AI 在本体约束内读和提案，人审后执行</li>
+</ol>
+
+<div class="note key"><b>什么时候本体是过度设计？</b>两个条件同时不满足就别建：①只有一个写方（你自己一个人写、一个人看）②改动没有现实世界后果（错了重跑就行）。单写方小系统上全套 Branch/Proposal 是杀鸡用牛刀 —— 但「单一注册表 + 完成证据」这两条几乎永远值得。</div>
+
+<h2 id="landscape"><span class="no">07 · LANDSCAPE</span>生态谱系</h2>
+
+<p>「本体」在不同社区长成不同形态，认清楚谁是谁：</p>
+<div class="twrap">
+<table>
+<thead><tr><th>谱系</th><th>形态</th><th>代表</th><th>什么时候用</th></tr></thead>
+<tbody>
+<tr><td><b>学院派本体工程</b></td><td>OWL/RDF 文件 + 推理机</td><td>Protégé、DeepOnto、Ontology Design Patterns</td><td>知识表示要严格语义和自动推理（科研、医药、语义网）</td></tr>
+<tr><td><b>上位/行业本体</b></td><td>现成词汇表，站在上面建自己的</td><td>gist（最小通用）、FIBO（金融）、biolink（生物）</td><td>建模前先查有没有现成的，别从零造词</td></tr>
+<tr><td><b>知识图谱</b></td><td>实体关系大图 + 图数据库</td><td>Neo4j、Google KG、GraphRAG</td><td>重点是关系查询和发现，不一定管「动作」</td></tr>
+<tr><td><b>语义层</b></td><td>指标/维度的统一定义层</td><td>Cube、dbt Semantic Layer、腾讯 SuperSonic</td><td>BI 和数据分析场景，「轻本体」——只有名词和度量，没有动词</td></tr>
+<tr><td><b>运营层本体</b></td><td>名词+动词+治理全栈</td><td>Palantir Foundry/AIP、ObjectStack（开源）</td><td>要驱动业务动作、要 AI 安全执行 —— FDE 的主战场</td></tr>
+<tr><td><b>注册表模式</b></td><td>单一代码注册表派生一切</td><td>quantmind registry.py（我的实践）</td><td>小团队的穷人版运营层：SQLite 尺度的本体</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="mine"><span class="no">08 · MY CASE</span>我的实例：QuantMind 本体</h2>
+
+<p>学完概念回到自己的系统过一遍，知识才算落地。quantmind 的本体化改造（2026-09-06 事故后）：</p>
+<ul>
+<li><b>事故</b>：两张因子表缺席四份独立清单，停更 42 天无人发现，182 目录因子静默消失 92 个 —— 典型的「被检集合 ≠ 存在集合」</li>
+<li><b>名词</b>：<span class="term">registry.py</span> 一张注册表，8 张因子表 × 258 声明列，每表登记 columns/max_lag/writer/category</li>
+<li><b>派生</b>：新鲜度看门狗、因子目录、IC 计算、部署审计全部从注册表派生 —— 恒等式「被巡检集合 ≡ 注册集合」成立</li>
+<li><b>动词</b>：6 个动作各带 gate/完成证据/失败路径；<span class="term">manifest.json</span> 原子写 = 跨机信任的唯一凭证</li>
+<li><b>治理</b>：A2 对账门（永不接受进程自报）+ 变更走 PR + 事故必回流新规则</li>
+</ul>
+<p>完整文档：<a href="https://lechangxu.github.io/quant-research-portfolio/quantmind-ontology.html">QuantMind 本体展示页</a>（含血缘图）· <a href="https://github.com/lechangxu/quant-research-portfolio/blob/main/docs/04-domain-ontology-operations-layer.md">English version</a></p>
+
+<h2 id="pitfalls"><span class="no">09 · PITFALLS</span>常见误区</h2>
+
+<ul>
+<li><b>「本体就是画 ER 图」</b> —— ER 图只有名词。没有动词和治理，是数据模型不是本体</li>
+<li><b>「本体要一步到位建全」</b> ——  Cyc 四十年没建完「宇宙本体」。小域起步、演化生长</li>
+<li><b>「上了知识图谱就有本体」</b> —— 图谱是存储和查询技术，本体是建模和治理方法。图库里可以装着毫无本体约定的烂数据</li>
+<li><b>「本体约束了灵活性」</b> —— 恰恰相反：显式的约束才是 AI 和新人敢动手的前提。隐式自由 = 没人敢碰</li>
+<li><b>「LLM 时代不需要本体了」</b> —— 反了。模型越强，越需要本体当墙和桥；Palantir 2025-11 把「建本体」本身都交给了 AI FDE，但**审定本体的仍是人** —— 人的角色从「连线工」升维为「审批者」</li>
+<li><b>「小团队用不上」</b> —— 全套治理用不上，但单一真源 + 完成证据两条原则在任何尺度都成立</li>
+</ul>
+
+<h2 id="quiz"><span class="no">10 · QUIZ</span>自测（点开对答案）</h2>
+
+<details class="quiz"><summary>Q1 · 用一句话说清本体和数据库 schema 的区别</summary><div class="ans">schema 只有名词（表结构）；<b>本体 = 名词 + 动词 + 规则</b>：对象和关系之外，还建模了允许的动作（带权限、副作用）、治理（审批、审计），并且驱动业务写回。schema 描述数据怎么存，本体定义业务怎么转。</div></details>
+
+<details class="quiz"><summary>Q2 · Gruber 定义里「shared conceptualization」的 shared 为什么关键？</summary><div class="ans">本体存在的意义是<b>对齐多方</b>（系统、团队、AI）。只存在于一个人脑中的概念模型不是本体，是笔记。shared 逼着概念被显式写出来并达成共识 —— 这正是不共享导致的「同词不同义」数据孤岛的解药。</div></details>
+
+<details class="quiz"><summary>Q3 · 为什么不能直接给 LLM 接原始数据库？</summary><div class="ans">三个缺：①缺<b>语境</b>（不知道你的「客户」指什么）→ 幻觉；②缺<b>动作边界</b>（什么操作允许）→ 越界风险；③缺<b>写回与留痕</b> → 不可审计不可规模化。本体一次补齐三个。</div></details>
+
+<details class="quiz"><summary>Q4 · 「被巡检集合 ≡ 注册集合」这个恒等式防住的是什么失败模式？</summary><div class="ans">防<b>新东西逃逸监控</b>：新增一张表只登记一次就自动进监控；不存在「加了表忘了加进检查清单」这类静默失察。四份手抄清单各自以为对方在检查 = 92 因子静默消失 42 天的根因。</div></details>
+
+<details class="quiz"><summary>Q5 · 什么时候建本体是过度设计？判断标准是什么？</summary><div class="ans">两个条件同时不满足就别建全套：①<b>多写方</b>（多个系统/人/AI 都要改这片数据）②<b>现实世界后果</b>（改错有实际代价）。单写方+错了可重跑 = 杀鸡用牛刀；但单一真源和完成证据两条轻量原则几乎永远值得。</div></details>
+
+<details class="quiz"><summary>Q6 · 「Action Log 即对象」比普通审计日志强在哪？</summary><div class="ans">日志被建模为本体里的对象后：可以被本体的查询能力检索、可以跟被改对象<b>建立 Link 关联</b>、可以纳入权限和治理。「谁在什么动作里改了什么」从死文本变成可推理的数据，审计从翻日志变成查模型。</div></details>
+
+<h2 id="refs"><span class="no">11 · PATH</span>学习路径与资源</h2>
+
+<h3>读（按顺序）</h3>
+<ul>
+<li><b>入门</b>：《The Palantir Impact: Ontology Strategy》（OSS 书，524 行）→ 我的<a href="https://github.com/Leading-AI-IO/palantir-ontology-strategy">精读笔记</a>在 atlas</li>
+<li><b>经典定义</b>：Stanford《Ontology Development 101》（Noy & McGuinness）—— 七步法原文</li>
+<li><b>官方深度</b>：Palantir Foundry 文档（Ontology system / AI FDE modes & capabilities）</li>
+<li><b>DDD 补课</b>：Eric Evans《领域驱动设计》浓缩版（Domain-Driven Design Quickly，免费 PDF）—— 攻「域」和「统一语言」</li>
+</ul>
+
+<h3>看代码（GitHub）</h3>
+<ul>
+<li><span class="term">Leading-AI-IO/palantir-ontology-strategy</span> ★261 — 本体战略 OSS 书</li>
+<li><span class="term">objectstack-ai/objectstack</span> ★96 — 「本体即软件」开源运行时</li>
+<li><span class="term">edmcouncil/fibo</span> ★812 — 金融业业务本体（我的域的行业词汇表）</li>
+<li><span class="term">semanticarts/gist-doc</span> — 最小上位本体，30 分钟建立「上位本体」直觉</li>
+<li><span class="term">tencentmusic/supersonic</span> ★5.2k — 中国企业语义层实战</li>
+</ul>
+
+<h3>练</h3>
+<ul>
+<li>拿自己一个项目写《objects/links/actions》一页纸 —— 已做：<a href="https://lechangxu.github.io/quant-research-portfolio/quantmind-ontology.html">quantmind 本体</a></li>
+<li>进阶：给 AIA 情报系统也写一份，对比两个域的本体差异</li>
+<li>面试演练：用自测六题口头作答，每题 60 秒内</li>
+</ul>
+
+<footer>本体学习手册 · 2026-11-19 · 配套：<a href="https://lechangxu.github.io/quant-research-portfolio/quantmind-ontology.html">实例页</a> · 材料来源见各章引用</footer>
+
+</div>
+</div>
+
+<script>
+if (window.mermaid) {
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'neutral',
+    flowchart: { htmlLabels: true }
+  });
+}
+</script>
+</body>
+</html>
